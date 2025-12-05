@@ -10,7 +10,7 @@
 ---
 
 ## Descrição do projeto
-Este projeto implementa um **robô explorador de labirinto 16x16** utilizando Python. O objetivo é mapear o labirinto, detectar paredes com sensores, calcular caminhos usando **floodfill** e executar o caminho ótimo até o centro.
+Este projeto implementa um **robô explorador de labirinto 16x16** utilizando Python. O objetivo é mapear o labirinto, detectar paredes com sensores, calcular caminhos usando **floodfill**, achar o melhor caminho até o centro e alcançá-lo no menor tempo.
 
 O projeto foi desenvolvido por alunos da Escola Politécnica de Pernambuco como parte da disciplina **Fundamentos da Programação** e foi feito para rodar no Micromouse Simulator do Mackorone, disponível em: https://github.com/mackorone/mms
 
@@ -76,15 +76,15 @@ O robô explora o labirinto utilizando três técnicas principais de navegação
 | Função | Descrição |
 |--------|-----------|
 | `marcar_paredes(x,y,d)` | Atualiza o mapa do labirinto com as paredes detectadas|
-| `floodfill_dist(objetivos)` | Calcula a distância mínima de cada célula até os objetivos usando BFS.|
+| `floodfill_dist(objetivos)` | Calcula a distância mínima de cada célula até os objetivos usando busca em largura.|
 | `girar_para(d, nd)` | Gira o robô para a direção desejada usando o mínimo de giros. |
 | `passo_seguro_frente(x,y,d)` | Move o robô para frente se não houver parede; atualiza o mapa em caso de parede. |
 | `escolher_movimento_flood(x,y,d)` | Seleciona a próxima direção com menor distância ao objetivo. |
 | `existe_celula_nao_visitada()` | Verifica se ainda existem células não exploradas. |
-| `executar_run1()` | Explora o labirinto, alternando Wall Follower e Floodfill. |
+| `executar_run1()` | Explora o labirinto, alternando entre Wall Follower e Floodfill, quando o WF não é capaz de achar novas posições. |
 | `retornar_ao_inicio(x,y,d)` | Retorna o robô à posição inicial `(0,0)` usando floodfill. |
-| `executar_run2(start_dir)` | Executa o caminho ótimo do início até o centro. |
-| `main()` | Roda o fluxo completo: RUN1 → Retorno → RUN2. |
+| `executar_run2(start_dir)` | Executa a run 2, fazendo o melhor caminho até o centro. |
+| `main()` | Roda o código completo: RUN1 → Retorno → RUN2. |
 
 ---
 
