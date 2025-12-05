@@ -1,3 +1,6 @@
+###Trabalho de Fundamentos da Programação EE2
+###Arthur de Souza, Arthur Filipe, Eduardo Emanuel, Fábio Henrique e Gabriel de Oliveira
+#Importação de bibliotecas
 import API
 import sys
 import numpy as np
@@ -7,7 +10,7 @@ def log(msg):
     sys.stderr.write(str(msg) + "\n")
     sys.stderr.flush()
 
-# Direções (compatível com MMS)
+# Direções
 CIMA = 0
 DIREITA = 1
 BAIXO = 2
@@ -16,17 +19,19 @@ ESQUERDA = 3
 DX = [0, 1, 0, -1]
 DY = [1, 0, -1, 0]
 
+# Criação da matriz
 N = 16
 
-maze = [[[False]*4 for _ in range(N)] for _ in range(N)]
-visited = [[False]*N for _ in range(N)]
-dist = np.zeros((N,N))
+maze = [[[False]*4 for _ in range(N)] for _ in range(N)] #False = sem parede
+visited = [[False]*N for _ in range(N)] 
+dist = np.zeros((N,N)) #distancia ao objetivo no FF
 
-def dentro(x,y):
+#vê se a posição x,y está dentro do labirinto para evitar bugs
+def dentro(x,y): 
     return 0 <= x < N and 0 <= y < N
 
 def marcar_paredes(x, y, d):
-    """Atualiza o mapa com base nos sensores."""
+    #Atualiza a matriz marcando as paredes
     front = API.wallFront()
     left  = API.wallLeft()
     right = API.wallRight()
@@ -39,6 +44,7 @@ def marcar_paredes(x, y, d):
         if dentro(nx,ny):
             maze[nx][ny][(df+2)%4] = True
 
+    #Aqui o % 4 mantém os valores entre 0,1,2 e 3 (as direções possíveis do labirinto)
     # Esquerda
     dl = (d - 1) % 4
     if left:
@@ -55,11 +61,10 @@ def marcar_paredes(x, y, d):
         if dentro(nx,ny):
             maze[nx][ny][(dr+2)%4] = True
 
-
+#implementação do FF
 def floodfill_dist(objetivos):
-    """Floodfill clássico para calcular distância ao conjunto de objetivos."""
     global dist
-    dist = np.full((N,N), 9999, dtype=int)  # Valor maior para evitar conflitos
+    dist = np.full((N,N), 9999, dtype=int)  # Coloca todos os valores da matriz como 9999. Escolhemos um valor grande para evitar bugs
     fila = deque()
 
     for (ax,ay) in objetivos:
@@ -77,7 +82,7 @@ def floodfill_dist(objetivos):
                 dist[nx][ny] = dist[x][y] + 1
                 fila.append((nx,ny))
 
-
+#d = direção, nd = nova direção
 def girar_para(d, nd):
     """Giro mínimo para alinhar com a direção nd."""
     diff = (nd - d) % 4
@@ -94,7 +99,7 @@ def girar_para(d, nd):
 def passo_seguro_frente(x, y, d):
     """Garante movimento seguro e atualiza mapa se houver inconsistência."""
     if API.wallFront():
-        # Parede física detectada → marca no mapa
+        # marca no mapa parede detectada
         maze[x][y][d] = True
         nx,ny = x + DX[d], y + DY[d]
         if dentro(nx,ny):
