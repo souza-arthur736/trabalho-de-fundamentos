@@ -90,6 +90,6 @@ O robô explora o labirinto utilizando três técnicas principais de navegação
 
 ## Como executar
 
-1. Clone o repositório:
-```bash
-git clone https://github.com/souza-arthur736/trabalho-de-fundamentos
+1. Baixe como .zip
+2. Coloque no MMS o filepath do codigomicromouse.py
+   Ex: "C:\Users\John-Doe\Downloads\trabalho-de-fundamentos\codigomicromouse.py
