@@ -84,7 +84,6 @@ def floodfill_dist(objetivos):
 
 #d = direção, nd = nova direção
 def girar_para(d, nd):
-    """Giro mínimo para alinhar com a direção nd."""
     diff = (nd - d) % 4
     if diff == 1:
         API.turnRight()
@@ -97,7 +96,6 @@ def girar_para(d, nd):
 
 
 def passo_seguro_frente(x, y, d):
-    """Garante movimento seguro e atualiza mapa se houver inconsistência."""
     if API.wallFront():
         # marca no mapa parede detectada
         maze[x][y][d] = True
@@ -109,9 +107,8 @@ def passo_seguro_frente(x, y, d):
     API.moveForward()
     return x + DX[d], y + DY[d], d, True
 
-
+#escolhe vizinho de menor distância para o FF
 def escolher_movimento_flood(x, y, d):
-    """Escolhe vizinho de menor distância no floodfill."""
     melhor = None
     melhor_dist = 10**9
 
@@ -125,7 +122,7 @@ def escolher_movimento_flood(x, y, d):
             melhor = nd
 
     if melhor is None:
-        return (d+2)%4  # fallback
+        return (d+2)%4 #direção 0 1 2 ou 3
     return melhor
 
 
@@ -136,7 +133,7 @@ def existe_celula_nao_visitada():
                 return True
     return False
 
-
+#Finalmente, a primeira rodada de exploração
 def executar_run1():
     log("RUN 1 – Explorando o labirinto...")
 
@@ -144,7 +141,7 @@ def executar_run1():
     d = CIMA
     visited[x][y] = True
 
-    modo = "WF"  # WF: wall follower / FF: floodfill
+    modo = "WF"  #WF:wall follower. 
     antigos_v = 0
     passos_sem_novidade = 0
 
@@ -153,8 +150,8 @@ def executar_run1():
     tentativas_recalculo = 0
 
     while True:
+        #Checa paredes e verifica se os passos são novos ou não, marcando todo o labirinto
         marcar_paredes(x,y,d)
-
         novos = sum(sum(1 for v in row if v) for row in visited)
         if novos == antigos_v:
             passos_sem_novidade += 1
@@ -163,7 +160,7 @@ def executar_run1():
         antigos_v = novos
 
         if passos_sem_novidade > 20:
-            modo = "FF"
+            modo = "FF" #escolhe FF quando não consegue achar novas posições com o WF
 
         if modo == "FF" and existe_celula_nao_visitada():
             alvo = [(i,j) for i in range(N) for j in range(N) if not visited[i][j]]
@@ -201,7 +198,7 @@ def executar_run1():
         API.setColor(x,y,"G")
 
         if (x,y) in [(7,7),(7,8),(8,7),(8,8)]:
-            log("RUN 1 completa!")
+            log("RUN 1 completa")
             break
 
         if total_passos > N*N*30:
@@ -212,7 +209,7 @@ def executar_run1():
 
 
 def retornar_ao_inicio(x,y,d):
-    log("Voltando ao início...")
+    log("Voltando ao início")
 
     floodfill_dist([(0,0)])
 
@@ -241,7 +238,7 @@ def retornar_ao_inicio(x,y,d):
 
 
 def executar_run2(start_dir):
-    log("RUN 2 – Executando caminho ótimo!")
+    log("RUN 2 – Executando melhor caminho")
 
     x,y = 0,0
     d = start_dir
@@ -257,7 +254,7 @@ def executar_run2(start_dir):
         marcar_paredes(x,y,d)
 
         x2,y2,d2,ok = passo_seguro_frente(x,y,d)
-        if not ok:
+        if not ok: #corrige a rota do robô
             tentativas_recalculo += 1
             if tentativas_recalculo > limite_recalculo:
                 log("Múltiplas divergências – parando RUN 2.")
@@ -271,7 +268,7 @@ def executar_run2(start_dir):
         API.setColor(x,y,"R")
 
         if (x,y) in [(7,7),(7,8),(8,7),(8,8)]:
-            log(f"RUN 2 completa em {passos} passos!")
+            log(f"RUN 2 completa em {passos} passos")
             break
 
         if passos > N*N*5:
@@ -283,6 +280,6 @@ def main():
     cx,cy,cd = executar_run1()
     sx,sy,sd = retornar_ao_inicio(cx,cy,cd)
     executar_run2(sd)
-
+#executa o código
 if __name__ == "__main__":
     main()
